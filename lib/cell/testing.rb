@@ -1,3 +1,5 @@
+require "uber/inheritable_attr"
+
 module Cell
   # Builder methods and Capybara support.
   # This gets included into Test::Unit, MiniTest::Spec, etc.
@@ -46,17 +48,13 @@ module Cell
       end
     end
 
-
-    # Rails specific.
-    def controller_for(controller_class)
-      # TODO: test without controller.
-      return unless controller_class
-
-      controller_class.new.tap do |ctl|
-        ctl.request = ::ActionController::TestRequest.new
-        ctl.instance_variable_set :@routes, ::Rails.application.routes.url_helpers
+    module ControllerFor
+      # This method is provided by the cells-rails gem.
+      def controller_for(controller_class)
+        # raise "[Cells] Please install (or update?) the cells-rails gem."
       end
     end
+    include ControllerFor
 
     def controller # FIXME: this won't allow us using let(:controller) in MiniTest.
       controller_for(self.class.controller_class)
@@ -72,6 +70,5 @@ module Cell
         end
       end
     end
-
-  end
+  end # Testing
 end
